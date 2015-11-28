@@ -11,7 +11,7 @@ function Profile(username) {
 
     EventEmitter.call(this);
 
-    profileEmitter = this;
+    var profileEmitter = this;
 
     //Connect to the API URL (http://teamtreehouse.com/username.json)
     var request = https.get("https://teamtreehouse.com/" + username + ".json", function(response) {
@@ -20,7 +20,7 @@ function Profile(username) {
         if (response.statusCode !== 200) {
             request.abort();
             //Status Code Error
-            profileEmitter.emit("error", new Error("There was an error getting the profile for " + username + ". (" + http.STATUS_CODES[response.statusCode] + ")"));
+            profileEmitter.emit("error", new Error("There was an error getting the profile for " + username + ". (" + response.statusCode + ")"));
         }
 
         //Read the data

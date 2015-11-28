@@ -2,6 +2,9 @@
  * Created by willowcheng on 2015-11-28.
  */
 
+var Profile = require("./profile.js");
+
+
 // Handle HTTP route GET / and POST / i.e. Home
 function home(request, response) {
     //if url == "/" && GET
@@ -25,14 +28,33 @@ function user(request, response) {
     if(username.length > 0) {
         response.writeHead(200, {'Content-Type': 'text/plain'});
         response.write("Header\n");
-        response.write(username + "\n");
-        response.end('Footer\n');
 
         //get json from Treehouse
+        var studentProfile = new Profile(username);
+
         //on "end"
-        //show profile
+        studentProfile.on("end", function (profileJSON) {
+            //show profile
+
+            //Store the values which we need
+            var values = {
+                avatarUrl: profileJSON.gravatar_url,
+                username: profileJSON.profile_name,
+                badges: profileJSON.badges.length,
+                javascriptPoints: profileJSON.points.JavaScript
+            };
+            //Simple response
+            response.write(values.username + " has " + values.badges + " badges\n");
+            response.end('Footer\n');
+        });
+
         //on "error"
-        //show error
+        studentProfile.on("error", function (error) {
+            //show error
+            response.write(error.message + "\n");
+            response.end('Footer\n');
+        });
+
     }
 }
 
